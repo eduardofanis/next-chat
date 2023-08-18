@@ -25,31 +25,30 @@ export default function Home() {
   const [modal, setModal] = React.useState(false);
   const [nome, setNome] = React.useState("");
   const [mensagem, setMensagem] = React.useState("");
-  const UsersMessages = useFetch();
-  const { request } = UsersMessages;
 
+  const { data, error, request } = useFetch();
   const NewMessage = useFetch();
 
   const fetchMessages = React.useCallback(async () => {
-      const token = getCookie("token");
-      if (token && typeof token === "string") {
-        const { url, options } = MESSAGES_GET(token);
-        const response = await request(url, options);
-        if (response) {
-          const formated = response.json.flatMap((message: IMessages) => [
-            {
-              _id: message._id,
-              nome: message.nome,
-              avatar: message.avatar,
-              ultimaMensagem: message.ultimaMensagem,
-              dataUltimaMensagem: message.dataUltimaMensagem
-                ? relativeDate(message.dataUltimaMensagem)
-                : null,
-            },
-          ]);
-          setMessages(formated);
-        }
+    const token = getCookie("token");
+    if (token && typeof token === "string") {
+      const { url, options } = MESSAGES_GET(token);
+      const response = await request(url, options);
+      if (response) {
+        const formated = response.json.flatMap((message: IMessages) => [
+          {
+            _id: message._id,
+            nome: message.nome,
+            avatar: message.avatar,
+            ultimaMensagem: message.ultimaMensagem,
+            dataUltimaMensagem: message.dataUltimaMensagem
+              ? relativeDate(message.dataUltimaMensagem)
+              : null,
+          },
+        ]);
+        setMessages(formated);
       }
+    }
   }, [request]);
 
   React.useEffect(() => {
@@ -73,8 +72,8 @@ export default function Home() {
     }
   }
 
-  if (UsersMessages.error) return <Error error={UsersMessages.error} />;
-  if (UsersMessages.data && messages.length < 1)
+  if (error) return <Error error={error} />;
+  if (data && messages.length < 1)
     return (
       <ProtectedRoute>
         <div className="h-full">
@@ -83,7 +82,7 @@ export default function Home() {
         </div>
       </ProtectedRoute>
     );
-  if (UsersMessages.data && messages.length > 1)
+  if (data && messages.length > 1)
     return (
       <ProtectedRoute>
         <div className="relative h-full sm:w-96">
@@ -127,15 +126,13 @@ export default function Home() {
           {modal && (
             <div className="text-center text-zinc-500 absolute bottom-20">
               <div className="mb-5 pb-5 border-b border-zinc-900 relative">
-                <h2>
-                  Nova conversa
-                  <button
-                    className="absolute right-0 top-1"
-                    onClick={() => setModal(false)}
-                  >
-                    <X size={20} />
-                  </button>
-                </h2>
+                <h2>Nova conversa</h2>
+                <button
+                  className="absolute right-0 top-1"
+                  onClick={() => setModal(false)}
+                >
+                  <X size={20} />
+                </button>
               </div>
 
               <form onSubmit={handleSubmit} className="text-left">

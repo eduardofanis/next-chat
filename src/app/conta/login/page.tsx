@@ -4,7 +4,7 @@ import useForm from "@/hooks/useForm";
 import Footer from "@/components/Footer/Footer";
 import ForgotPassword from "@/components/Forms/ForgotPassword";
 import FormButton from "@/components/Forms/FormButton";
-import Header, { HeaderLogin } from "@/components/Header/Header";
+import { HeaderLogin } from "@/components/Header/Header";
 import Button from "@/components/Interface/Button";
 import Input from "@/components/Forms/Input";
 import { UserContext } from "@/app/UserContext";

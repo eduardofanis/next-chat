@@ -1,6 +1,5 @@
 "use client";
 import { CHAT_GET, MESSAGE_POST, USER_GET } from "@/api/api";
-import FormButton from "@/components/Forms/FormButton";
 import Error from "@/components/Interface/Error";
 import ProtectedRoute from "@/components/Interface/ProtectedRoute";
 import useFetch from "@/hooks/useFetch";
@@ -11,6 +10,7 @@ import { CaretLeft, PaperPlaneRight } from "@phosphor-icons/react";
 import React from "react";
 import { relativeDate } from "@/hooks/relativeDate";
 import ChatSkeleton from "@/components/Interface/Skeletons/ChatSkeleton";
+import { getCookie } from "cookies-next";
 
 interface IMessages {
   key: string;
@@ -33,36 +33,32 @@ export default function Conversa() {
   const { slug } = useParams();
 
   const fetchChat = React.useCallback(async () => {
-    if (typeof window !== "undefined") {
-      const token = window.localStorage.getItem("token");
-      if (token) {
-        const { url, options } = CHAT_GET(token, String(slug));
-        const response = await request(url, options);
-        if (response) {
-          const formated = response.json.flatMap((message: IMessages) => [
-            {
-              key: message.createdAt,
-              createdAt: relativeDate(message.createdAt),
-              isRemetente: message.isRemetente,
-              texto: message.texto,
-            },
-          ]);
-          setChat(formated);
-        }
+    const token = getCookie("token");
+    if (token && typeof token === "string") {
+      const { url, options } = CHAT_GET(token, String(slug));
+      const response = await request(url, options);
+      if (response) {
+        const formated = response.json.flatMap((message: IMessages) => [
+          {
+            key: message.createdAt,
+            createdAt: relativeDate(message.createdAt),
+            isRemetente: message.isRemetente,
+            texto: message.texto,
+          },
+        ]);
+        setChat(formated);
       }
     }
   }, [request, slug]);
 
   React.useEffect(() => {
     async function fetchUser() {
-      if (typeof window !== "undefined") {
-        const token = window.localStorage.getItem("token");
-        if (token) {
-          const { url, options } = USER_GET(token, String(slug));
-          const response = await request(url, options);
-          if (response) {
-            setUser(response.json);
-          }
+      const token = getCookie("token");
+      if (token && typeof token === "string") {
+        const { url, options } = USER_GET(token, String(slug));
+        const response = await request(url, options);
+        if (response) {
+          setUser(response.json);
         }
       }
     }
@@ -72,17 +68,15 @@ export default function Conversa() {
 
   async function handleSubmit(event: any) {
     event.preventDefault();
-    if (typeof window !== "undefined") {
-      const token = window.localStorage.getItem("token");
-      if (token && mensagem && !loading) {
-        const { url, options } = MESSAGE_POST(token, String(slug), {
-          texto: mensagem,
-        });
-        const response = await request(url, options);
-        setMensagem("");
-        if (response && response.response && response.response.ok) {
-          fetchChat();
-        }
+    const token = getCookie("token");
+    if (token && typeof token === "string" && mensagem && !loading) {
+      const { url, options } = MESSAGE_POST(token, String(slug), {
+        texto: mensagem,
+      });
+      const response = await request(url, options);
+      setMensagem("");
+      if (response && response.response && response.response.ok) {
+        fetchChat();
       }
     }
   }

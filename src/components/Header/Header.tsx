@@ -14,12 +14,21 @@ export default function Header({
   home?: boolean;
   account?: boolean;
 }) {
+  const [avatar, setAvatar] = React.useState("");
   const User = React.useContext(UserContext);
-  const avatar = getCookie("avatar");
+
+  React.useEffect(() => {
+    const avatar = getCookie("avatar");
+    if (avatar && typeof avatar === "string") {
+      setAvatar(avatar);
+    } else {
+      setAvatar("");
+    }
+  }, []);
 
   if (User && User.login === true) {
     return (
-      <div className="flex w-full border-solid border-b border-zinc-900 pb-5 mb-10 justify-center place-content-between relative">
+      <div className="flex w-full border-solid border-b border-zinc-900 pb-5 mb-5 justify-center place-content-between relative">
         {!home && (
           <Link href="/" className="absolute left-0">
             <House size={20} color="#ccc" />
@@ -28,9 +37,7 @@ export default function Header({
         <h1 className="text-zinc-400">{title}</h1>
         {!account && avatar ? (
           <Link href="/conta" className="absolute right-0">
-            {typeof avatar === "string" && (
-              <Image src={avatar} alt="Foto de perfil" width={24} height={24} />
-            )}
+            <Image src={avatar} alt="Foto de perfil" width={24} height={24} />
           </Link>
         ) : (
           <button
