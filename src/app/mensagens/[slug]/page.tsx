@@ -11,6 +11,11 @@ import { CaretLeft, PaperPlaneRight } from "@phosphor-icons/react";
 import React from "react";
 import { relativeDate } from "@/hooks/relativeDate";
 import ChatSkeleton from "@/components/Interface/Skeletons/ChatSkeleton";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Chat",
+};
 
 interface IMessages {
   key: string;

@@ -10,6 +10,11 @@ import { relativeDate } from "@/hooks/relativeDate";
 import Header from "@/components/Header/Header";
 import { ChatText, PaperPlaneRight, X } from "@phosphor-icons/react";
 import MessagesSkeleton from "@/components/Interface/Skeletons/MessagesSkeleton";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Suas conversas",
+};
 
 interface IMessages {
   _id: string;

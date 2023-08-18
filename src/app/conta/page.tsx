@@ -3,6 +3,11 @@ import Header from "@/components/Header/Header";
 import ProtectedRoute from "@/components/Interface/ProtectedRoute";
 import Image from "next/image";
 import React from "react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Faça login",
+};
 
 export default function Conta() {
   if (typeof window !== "undefined") {

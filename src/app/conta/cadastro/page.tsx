@@ -11,6 +11,11 @@ import useFetch from "@/hooks/useFetch";
 import Error from "@/components/Interface/Error";
 import React from "react";
 import { useRouter } from "next/navigation";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Cadastre-se",
+};
 
 export default function Cadastro() {
   const username = useForm();
