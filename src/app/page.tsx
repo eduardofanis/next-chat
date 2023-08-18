@@ -10,11 +10,7 @@ import { relativeDate } from "@/hooks/relativeDate";
 import Header from "@/components/Header/Header";
 import { ChatText, PaperPlaneRight, X } from "@phosphor-icons/react";
 import MessagesSkeleton from "@/components/Interface/Skeletons/MessagesSkeleton";
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "Suas conversas",
-};
+import { getCookie } from "cookies-next";
 
 interface IMessages {
   _id: string;
@@ -35,25 +31,23 @@ export default function Home() {
   const NewMessage = useFetch();
 
   const fetchMessages = React.useCallback(async () => {
-    if (typeof window !== "undefined") {
-      const token = window.localStorage.getItem("token");
-      if (token) {
-        const { url, options } = MESSAGES_GET(token);
-        const response = await request(url, options);
-        if (response) {
-          const formated = response.json.flatMap((message: IMessages) => [
-            {
-              _id: message._id,
-              nome: message.nome,
-              avatar: message.avatar,
-              ultimaMensagem: message.ultimaMensagem,
-              dataUltimaMensagem: message.dataUltimaMensagem
-                ? relativeDate(message.dataUltimaMensagem)
-                : null,
-            },
-          ]);
-          setMessages(formated);
-        }
+    const token = getCookie("token");
+    if (token && typeof token === "string") {
+      const { url, options } = MESSAGES_GET(token);
+      const response = await request(url, options);
+      if (response) {
+        const formated = response.json.flatMap((message: IMessages) => [
+          {
+            _id: message._id,
+            nome: message.nome,
+            avatar: message.avatar,
+            ultimaMensagem: message.ultimaMensagem,
+            dataUltimaMensagem: message.dataUltimaMensagem
+              ? relativeDate(message.dataUltimaMensagem)
+              : null,
+          },
+        ]);
+        setMessages(formated);
       }
     }
   }, [request]);
@@ -64,8 +58,8 @@ export default function Home() {
 
   async function handleSubmit(event: any) {
     event.preventDefault();
-    const token = window.localStorage.getItem("token");
-    if (token && nome && mensagem) {
+    const token = getCookie("token");
+    if (token && typeof token === "string" && nome && mensagem) {
       const { url, options } = MESSAGE_POST(token, nome, {
         texto: mensagem,
       });
@@ -84,17 +78,16 @@ export default function Home() {
     return (
       <ProtectedRoute>
         <div className="h-full">
-          <Header home="true">Suas conversas</Header>
+          <Header home={true} title="Suas conversas" />
           <p>Nenhuma mensagem encontrada.</p>
         </div>
       </ProtectedRoute>
     );
   if (UsersMessages.data && messages.length > 1)
     return (
-      <ProtectedRoute>
         <div className="relative h-full sm:w-96">
           <div className={`${modal && "opacity-10"}`}>
-            <Header home="true">Suas conversas</Header>
+            <Header home={true} title="Suas conversas" />
             <div>
               {messages
                 .filter((message) => message.ultimaMensagem)
@@ -171,7 +164,6 @@ export default function Home() {
             </div>
           )}
         </div>
-      </ProtectedRoute>
     );
   return (
     <ProtectedRoute>

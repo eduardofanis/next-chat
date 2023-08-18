@@ -26,7 +26,7 @@ export default function Cadastro() {
 
   return (
     <div className="flex flex-col h-full place-content-between sm:w-96">
-      <HeaderLogin>Fazer login</HeaderLogin>
+      <HeaderLogin title="Fazer login" />
       <div>
         <form onSubmit={handleSubmit} className="flex flex-col gap-1">
           <Input label="Usuário" type="text" name="username" {...username} />

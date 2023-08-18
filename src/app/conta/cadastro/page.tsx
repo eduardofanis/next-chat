@@ -11,11 +11,6 @@ import useFetch from "@/hooks/useFetch";
 import Error from "@/components/Interface/Error";
 import React from "react";
 import { useRouter } from "next/navigation";
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "Cadastre-se",
-};
 
 export default function Cadastro() {
   const username = useForm();
@@ -43,7 +38,7 @@ export default function Cadastro() {
 
   return (
     <div className="flex flex-col h-full place-content-between sm:w-96">
-      <HeaderLogin>Cadastre-se</HeaderLogin>
+      <HeaderLogin title="Cadastre-se" />
       <div>
         <form onSubmit={handleSubmit} className="flex flex-col gap-1">
           <Input label="Usuário" type="text" name="username" {...username} />

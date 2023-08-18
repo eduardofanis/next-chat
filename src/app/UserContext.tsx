@@ -1,8 +1,9 @@
 "use client";
 
 import { TOKEN_POST, TOKEN_VALIDATE_POST, MESSAGES_GET } from "@/api/api";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import React from "react";
+import { getCookie, setCookie, deleteCookie } from "cookies-next";
 
 export interface UserContextType {
   userLogin: (nome: string, senha: string) => Promise<void>;
@@ -27,11 +28,9 @@ export default function UserStorage({ children }: any) {
     setError(null);
     setLoading(false);
     setLogin(false);
-    if (typeof window !== "undefined") {
-      window.localStorage.removeItem("token");
-      window.localStorage.removeItem("avatar");
-      window.localStorage.removeItem("nome");
-    }
+    deleteCookie("token");
+    deleteCookie("avatar");
+    deleteCookie("nome");
   }, []);
 
   async function getUser(token: string) {
@@ -49,11 +48,9 @@ export default function UserStorage({ children }: any) {
       const tokenRes = await fetch(url, options);
       if (!tokenRes.ok) throw new Error(`Error: ${tokenRes.statusText}`);
       const { token, usuario } = await tokenRes.json();
-      if (typeof window !== "undefined") {
-        window.localStorage.setItem("token", token);
-        window.localStorage.setItem("avatar", usuario.avatar);
-        window.localStorage.setItem("nome", usuario.nome);
-      }
+      setCookie("token", token);
+      setCookie("avatar", usuario.avatar);
+      setCookie("nome", usuario.nome);
       await getUser(token);
       router.push("/");
     } catch (err) {
@@ -69,27 +66,24 @@ export default function UserStorage({ children }: any) {
 
   React.useEffect(() => {
     async function autoLogin() {
-      if (typeof window !== "undefined") {
-        const token = window.localStorage.getItem("token");
-        if (token) {
-          try {
-            setError(null);
-            setLoading(true);
-            const { url, options } = TOKEN_VALIDATE_POST(token);
-            const response = await fetch(url, options);
-            if (!response.ok) throw new Error("Token inválido");
-            await getUser(token);
-          } catch (err) {
-            userLogout();
-          } finally {
-            setLoading(false);
-            setLogin(true);
-          }
-        } else {
-          setLogin(false);
+      const token = getCookie("token");
+      if (token && typeof token === "string") {
+        try {
+          setError(null);
+          setLoading(true);
+          const { url, options } = TOKEN_VALIDATE_POST(token);
+          const response = await fetch(url, options);
+          if (!response.ok) throw new Error("Token inválido");
+          await getUser(token);
+        } catch (err) {
+          userLogout();
+        } finally {
+          setLoading(false);
+          setLogin(true);
         }
+      } else {
+        setLogin(false);
       }
-      
     }
     autoLogin();
   }, [userLogout]);
