@@ -31,25 +31,25 @@ export default function Home() {
   const NewMessage = useFetch();
 
   const fetchMessages = React.useCallback(async () => {
-    const token = getCookie("token");
-    if (token && typeof token === "string") {
-      const { url, options } = MESSAGES_GET(token);
-      const response = await request(url, options);
-      if (response) {
-        const formated = response.json.flatMap((message: IMessages) => [
-          {
-            _id: message._id,
-            nome: message.nome,
-            avatar: message.avatar,
-            ultimaMensagem: message.ultimaMensagem,
-            dataUltimaMensagem: message.dataUltimaMensagem
-              ? relativeDate(message.dataUltimaMensagem)
-              : null,
-          },
-        ]);
-        setMessages(formated);
+      const token = getCookie("token");
+      if (token && typeof token === "string") {
+        const { url, options } = MESSAGES_GET(token);
+        const response = await request(url, options);
+        if (response) {
+          const formated = response.json.flatMap((message: IMessages) => [
+            {
+              _id: message._id,
+              nome: message.nome,
+              avatar: message.avatar,
+              ultimaMensagem: message.ultimaMensagem,
+              dataUltimaMensagem: message.dataUltimaMensagem
+                ? relativeDate(message.dataUltimaMensagem)
+                : null,
+            },
+          ]);
+          setMessages(formated);
+        }
       }
-    }
   }, [request]);
 
   React.useEffect(() => {
@@ -85,6 +85,7 @@ export default function Home() {
     );
   if (UsersMessages.data && messages.length > 1)
     return (
+      <ProtectedRoute>
         <div className="relative h-full sm:w-96">
           <div className={`${modal && "opacity-10"}`}>
             <Header home={true} title="Suas conversas" />
@@ -164,6 +165,7 @@ export default function Home() {
             </div>
           )}
         </div>
+      </ProtectedRoute>
     );
   return (
     <ProtectedRoute>
