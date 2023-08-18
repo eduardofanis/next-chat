@@ -5,8 +5,8 @@ import Image from "next/image";
 import React from "react";
 
 export default function Conta() {
-  const avatar = window.localStorage.getItem("avatar");
-  const nome = window.localStorage.getItem("nome");
+  const avatar = window ? window.localStorage.getItem("avatar") : null;
+  const nome = window ? window.localStorage.getItem("nome") : null;
 
   return (
     <ProtectedRoute>

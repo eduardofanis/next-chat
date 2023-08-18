@@ -30,23 +30,25 @@ export default function Home() {
   const NewMessage = useFetch();
 
   const fetchMessages = React.useCallback(async () => {
-    const token = window.localStorage.getItem("token");
-    if (token) {
-      const { url, options } = MESSAGES_GET(token);
-      const response = await request(url, options);
-      if (response) {
-        const formated = response.json.flatMap((message: IMessages) => [
-          {
-            _id: message._id,
-            nome: message.nome,
-            avatar: message.avatar,
-            ultimaMensagem: message.ultimaMensagem,
-            dataUltimaMensagem: message.dataUltimaMensagem
-              ? relativeDate(message.dataUltimaMensagem)
-              : null,
-          },
-        ]);
-        setMessages(formated);
+    if (typeof window !== "undefined") {
+      const token = window.localStorage.getItem("token");
+      if (token) {
+        const { url, options } = MESSAGES_GET(token);
+        const response = await request(url, options);
+        if (response) {
+          const formated = response.json.flatMap((message: IMessages) => [
+            {
+              _id: message._id,
+              nome: message.nome,
+              avatar: message.avatar,
+              ultimaMensagem: message.ultimaMensagem,
+              dataUltimaMensagem: message.dataUltimaMensagem
+                ? relativeDate(message.dataUltimaMensagem)
+                : null,
+            },
+          ]);
+          setMessages(formated);
+        }
       }
     }
   }, [request]);

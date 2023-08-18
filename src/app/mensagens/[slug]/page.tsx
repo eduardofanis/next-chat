@@ -33,32 +33,36 @@ export default function Conversa() {
   const { slug } = useParams();
 
   const fetchChat = React.useCallback(async () => {
-    const token = window.localStorage.getItem("token");
-    if (token) {
-      const { url, options } = CHAT_GET(token, String(slug));
-      const response = await request(url, options);
-      if (response) {
-        const formated = response.json.flatMap((message: IMessages) => [
-          {
-            key: message.createdAt,
-            createdAt: relativeDate(message.createdAt),
-            isRemetente: message.isRemetente,
-            texto: message.texto,
-          },
-        ]);
-        setChat(formated);
+    if (typeof window !== "undefined") {
+      const token = window.localStorage.getItem("token");
+      if (token) {
+        const { url, options } = CHAT_GET(token, String(slug));
+        const response = await request(url, options);
+        if (response) {
+          const formated = response.json.flatMap((message: IMessages) => [
+            {
+              key: message.createdAt,
+              createdAt: relativeDate(message.createdAt),
+              isRemetente: message.isRemetente,
+              texto: message.texto,
+            },
+          ]);
+          setChat(formated);
+        }
       }
     }
   }, [request, slug]);
 
   React.useEffect(() => {
     async function fetchUser() {
-      const token = window.localStorage.getItem("token");
-      if (token) {
-        const { url, options } = USER_GET(token, String(slug));
-        const response = await request(url, options);
-        if (response) {
-          setUser(response.json);
+      if (typeof window !== "undefined") {
+        const token = window.localStorage.getItem("token");
+        if (token) {
+          const { url, options } = USER_GET(token, String(slug));
+          const response = await request(url, options);
+          if (response) {
+            setUser(response.json);
+          }
         }
       }
     }
@@ -68,15 +72,17 @@ export default function Conversa() {
 
   async function handleSubmit(event: any) {
     event.preventDefault();
-    const token = window.localStorage.getItem("token");
-    if (token && mensagem && !loading) {
-      const { url, options } = MESSAGE_POST(token, String(slug), {
-        texto: mensagem,
-      });
-      const response = await request(url, options);
-      setMensagem("");
-      if (response && response.response && response.response.ok) {
-        fetchChat();
+    if (typeof window !== "undefined") {
+      const token = window.localStorage.getItem("token");
+      if (token && mensagem && !loading) {
+        const { url, options } = MESSAGE_POST(token, String(slug), {
+          texto: mensagem,
+        });
+        const response = await request(url, options);
+        setMensagem("");
+        if (response && response.response && response.response.ok) {
+          fetchChat();
+        }
       }
     }
   }
