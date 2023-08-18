@@ -24,7 +24,7 @@ export default function RootLayout({
         <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
       </head>
       <body className=" bg-black flex justify-center">
-        <main className="bg-black sm:w-auto sm:min-w-[30rem] w-full sm:h-[48rem] h-screen text-white p-10 sm:m-20 sm:rounded-lg rounded-none sm:border sm:border-zinc-900 overflow-hidden">
+        <main className="bg-black sm:w-auto sm:min-w-[30rem] w-full sm:h-[48rem] h-screen text-white p-5 sm:p-10 sm:m-20 sm:rounded-lg rounded-none sm:border sm:border-zinc-900 overflow-hidden">
           <UserStorage>{children}</UserStorage>
         </main>
       </body>
