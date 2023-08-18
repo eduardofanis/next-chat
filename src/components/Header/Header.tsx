@@ -6,7 +6,7 @@ import Image from "next/image";
 
 export default function Header({ children, home, account }: any) {
   const User = React.useContext(UserContext);
-  const avatar = window.localStorage.getItem("avatar");
+  const avatar = window ? window.localStorage.getItem("avatar") : null;
 
   if (User && User.login === true) {
     return (
